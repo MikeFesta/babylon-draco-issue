@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Test code showing that SceneLoader.AppendAsync is not working for draco compressed base64 strings",
   "main": "index.js",
+  "type": "module",
   "scripts": {},
   "repository": {
     "type": "git",
@@ -21,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/MikeFesta/babylon-draco-issue/issues"
   },
-  "homepage": "https://github.com/MikeFesta/babylon-draco-issue#readme"
+  "homepage": "https://github.com/MikeFesta/babylon-draco-issue#readme",
+  "dependencies": {
+    "@babylonjs/core": "^5.51.0",
+    "@babylonjs/loaders": "^5.51.0"
+  }
 }

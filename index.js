@@ -1,0 +1,72 @@
+import { exit } from "process";
+import { NullEngine } from "@babylonjs/core/Engines/nullEngine.js";
+import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader.js";
+import { Scene } from "@babylonjs/core/scene.js";
+import { GLTFFileLoader } from "@babylonjs/loaders";
+import "@babylonjs/loaders/glTF/2.0/glTFLoader.js";
+
+try {
+  const compressedCubeBase64 =
+    "data:;base64,Z2xURgIAAAA8BQAAGAQAAEpTT057ImFzc2V0Ijp7ImdlbmVyYXRvciI6Iktocm9ub3MgZ2xURiBCbGVuZGVyIEkvTyB2My40LjUwIiwidmVyc2lvbiI6IjIuMCJ9LCJleHRlbnNpb25zVXNlZCI6WyJLSFJfZHJhY29fbWVzaF9jb21wcmVzc2lvbiJdLCJleHRlbnNpb25zUmVxdWlyZWQiOlsiS0hSX2RyYWNvX21lc2hfY29tcHJlc3Npb24iXSwic2NlbmUiOjAsInNjZW5lcyI6W3sibmFtZSI6IlNjZW5lIiwibm9kZXMiOlswXX1dLCJub2RlcyI6W3sibWVzaCI6MCwibmFtZSI6IkN1YmUifV0sIm1hdGVyaWFscyI6W3siZG91YmxlU2lkZWQiOnRydWUsIm5hbWUiOiJNYXRlcmlhbCIsInBick1ldGFsbGljUm91Z2huZXNzIjp7ImJhc2VDb2xvckZhY3RvciI6WzAuODAwMDAwMDExOTIwOTI5LDAuODAwMDAwMDExOTIwOTI5LDAuODAwMDAwMDExOTIwOTI5LDFdLCJtZXRhbGxpY0ZhY3RvciI6MCwicm91Z2huZXNzRmFjdG9yIjowLjQwMDAwMDAwNTk2MDQ2NDV9fV0sIm1lc2hlcyI6W3sibmFtZSI6IkN1YmUiLCJwcmltaXRpdmVzIjpbeyJhdHRyaWJ1dGVzIjp7IlBPU0lUSU9OIjowLCJURVhDT09SRF8wIjoxLCJOT1JNQUwiOjJ9LCJleHRlbnNpb25zIjp7IktIUl9kcmFjb19tZXNoX2NvbXByZXNzaW9uIjp7ImJ1ZmZlclZpZXciOjAsImF0dHJpYnV0ZXMiOnsiUE9TSVRJT04iOjAsIlRFWENPT1JEXzAiOjEsIk5PUk1BTCI6Mn19fSwiaW5kaWNlcyI6MywibWF0ZXJpYWwiOjAsIm1vZGUiOjR9XX1dLCJhY2Nlc3NvcnMiOlt7ImNvbXBvbmVudFR5cGUiOjUxMjYsImNvdW50IjoyNCwibWF4IjpbMSwxLDFdLCJtaW4iOlstMSwtMSwtMV0sInR5cGUiOiJWRUMzIn0seyJjb21wb25lbnRUeXBlIjo1MTI2LCJjb3VudCI6MjQsInR5cGUiOiJWRUMyIn0seyJjb21wb25lbnRUeXBlIjo1MTI2LCJjb3VudCI6MjQsInR5cGUiOiJWRUMzIn0seyJjb21wb25lbnRUeXBlIjo1MTIzLCJjb3VudCI6MzYsInR5cGUiOiJTQ0FMQVIifV0sImJ1ZmZlclZpZXdzIjpbeyJidWZmZXIiOjAsImJ5dGVMZW5ndGgiOjI2MywiYnl0ZU9mZnNldCI6MH1dLCJidWZmZXJzIjpbeyJieXRlTGVuZ3RoIjoyNjR9XX0gCAEAAEJJTgBEUkFDTwICAQEAAAAYDAIMAAAF3/d93wf/AmZA/wJmQP8CZkAD/wAAAAAAAQAAAQAJAwAAAgEDCQIAAQIBAQkDAAIDAQEBAQIDASiRC3EMDmRHEWAv/xK+X0lVB8KvAAAAAP8/AAAAAIC/AACAvwAAgL8AAABADgEBAQANAwEQI1UVrRoHd4lAByCfiQAYgADYf/8HAP/vPwD+3/8BwP8DAAD+3/8BAAD4PwD+3/8BwP8JIAD+3/8BAAAAoP//338AAAAAAAD/DwAAAAAAPgAAAAAAAIA/DAADAQALAwEwGwEIAQgGAAjLlW+AAAAI/AcAAAgA4P9/AID/wP//AP8DAAD/AQAACgA=";
+  const uncompressedCubeBase64 =
+    "data:;base64,Z2xURgIAAABkBwAAAAQAAEpTT057ImFzc2V0Ijp7ImdlbmVyYXRvciI6Iktocm9ub3MgZ2xURiBCbGVuZGVyIEkvTyB2My4yLjQzIiwidmVyc2lvbiI6IjIuMCJ9LCJzY2VuZSI6MCwic2NlbmVzIjpbeyJuYW1lIjoiU2NlbmUiLCJub2RlcyI6WzBdfV0sIm5vZGVzIjpbeyJtZXNoIjowLCJuYW1lIjoiQ3ViZSJ9XSwibWF0ZXJpYWxzIjpbeyJkb3VibGVTaWRlZCI6dHJ1ZSwibmFtZSI6Ik1hdGVyaWFsIiwicGJyTWV0YWxsaWNSb3VnaG5lc3MiOnsiYmFzZUNvbG9yRmFjdG9yIjpbMC44MDAwMDAwMTE5MjA5MjksMC44MDAwMDAwMTE5MjA5MjksMC44MDAwMDAwMTE5MjA5MjksMV0sIm1ldGFsbGljRmFjdG9yIjowLCJyb3VnaG5lc3NGYWN0b3IiOjAuNDAwMDAwMDA1OTYwNDY0NX19XSwibWVzaGVzIjpbeyJuYW1lIjoiQ3ViZSIsInByaW1pdGl2ZXMiOlt7ImF0dHJpYnV0ZXMiOnsiUE9TSVRJT04iOjAsIk5PUk1BTCI6MSwiVEVYQ09PUkRfMCI6Mn0sImluZGljZXMiOjMsIm1hdGVyaWFsIjowfV19XSwiYWNjZXNzb3JzIjpbeyJidWZmZXJWaWV3IjowLCJjb21wb25lbnRUeXBlIjo1MTI2LCJjb3VudCI6MjQsIm1heCI6WzEsMSwxXSwibWluIjpbLTEsLTEsLTFdLCJ0eXBlIjoiVkVDMyJ9LHsiYnVmZmVyVmlldyI6MSwiY29tcG9uZW50VHlwZSI6NTEyNiwiY291bnQiOjI0LCJ0eXBlIjoiVkVDMyJ9LHsiYnVmZmVyVmlldyI6MiwiY29tcG9uZW50VHlwZSI6NTEyNiwiY291bnQiOjI0LCJ0eXBlIjoiVkVDMiJ9LHsiYnVmZmVyVmlldyI6MywiY29tcG9uZW50VHlwZSI6NTEyMywiY291bnQiOjM2LCJ0eXBlIjoiU0NBTEFSIn1dLCJidWZmZXJWaWV3cyI6W3siYnVmZmVyIjowLCJieXRlTGVuZ3RoIjoyODgsImJ5dGVPZmZzZXQiOjB9LHsiYnVmZmVyIjowLCJieXRlTGVuZ3RoIjoyODgsImJ5dGVPZmZzZXQiOjI4OH0seyJidWZmZXIiOjAsImJ5dGVMZW5ndGgiOjE5MiwiYnl0ZU9mZnNldCI6NTc2fSx7ImJ1ZmZlciI6MCwiYnl0ZUxlbmd0aCI6NzIsImJ5dGVPZmZzZXQiOjc2OH1dLCJidWZmZXJzIjpbeyJieXRlTGVuZ3RoIjo4NDB9XX0gSAMAAEJJTgAAAIA/AACAPwAAgL8AAIA/AACAPwAAgL8AAIA/AACAPwAAgL8AAIA/AACAvwAAgL8AAIA/AACAvwAAgL8AAIA/AACAvwAAgL8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AACAvwAAgD8AAIA/AACAvwAAgD8AAIA/AACAvwAAgD8AAIC/AACAPwAAgL8AAIC/AACAPwAAgL8AAIC/AACAPwAAgL8AAIC/AACAvwAAgL8AAIC/AACAvwAAgL8AAIC/AACAvwAAgL8AAIC/AACAPwAAgD8AAIC/AACAPwAAgD8AAIC/AACAPwAAgD8AAIC/AACAvwAAgD8AAIC/AACAvwAAgD8AAIC/AACAvwAAgD8AAAAAAAAAAAAAgL8AAAAAAACAPwAAAIAAAIA/AAAAAAAAAIAAAAAAAACAvwAAAIAAAAAAAAAAAAAAgL8AAIA/AAAAAAAAAIAAAAAAAAAAAAAAgD8AAAAAAACAPwAAAIAAAIA/AAAAAAAAAIAAAAAAAACAvwAAAIAAAAAAAAAAAAAAgD8AAIA/AAAAAAAAAIAAAIC/AAAAAAAAAIAAAAAAAAAAAAAAgL8AAAAAAACAPwAAAIAAAIC/AAAAAAAAAIAAAAAAAACAvwAAAIAAAAAAAAAAAAAAgL8AAIC/AAAAAAAAAIAAAAAAAAAAAAAAgD8AAAAAAACAPwAAAIAAAIC/AAAAAAAAAIAAAAAAAACAvwAAAIAAAAAAAAAAAAAAgD8AACA/AAAAPwAAID8AAAA/AAAgPwAAAD8AAMA+AAAAPwAAwD4AAAA/AADAPgAAAD8AACA/AACAPgAAID8AAIA+AAAgPwAAgD4AAMA+AACAPgAAwD4AAIA+AADAPgAAgD4AACA/AABAPwAAID8AAEA/AABgPwAAAD8AAMA+AABAPwAAAD4AAAA/AADAPgAAQD8AACA/AACAPwAAID8AAAAAAABgPwAAgD4AAMA+AACAPwAAAD4AAIA+AADAPgAAAAABAA4AFAABABQABwAKAAYAEwAKABMAFwAVABIADAAVAAwADwAQAAMACQAQAAkAFgAFAAIACAAFAAgACwARAA0AAAARAAAABAA=";
+
+  const engine = new NullEngine();
+  const scene = new Scene(engine);
+  console.log("Babylon scene created");
+
+  // Uncompressed base64 with SceneLoader - works
+  await SceneLoader.AppendAsync(
+    "",
+    uncompressedCubeBase64,
+    scene,
+    () => {},
+    ".gltf"
+  );
+  console.log(
+    "uncompressed cube loaded from base64 with SceneLoader.AppendAsync"
+  );
+
+  // Draco Compressed base64 with GLTFFileLoader - works
+  await new Promise((resolve, reject) => {
+    const fileLoader = new GLTFFileLoader();
+    fileLoader.loadFile(
+      scene,
+      compressedCubeBase64,
+      (data) => {
+        resolve();
+      },
+      (ev) => {
+        // progress. nothing to do
+      },
+      true,
+      (err) => {
+        reject();
+      }
+    );
+  });
+  console.log("compressed cube loaded from base64 with GLTFFileLoader");
+
+  // Draco Compressed base64 with SceneLoader - fails
+  await SceneLoader.AppendAsync(
+    "",
+    compressedCubeBase64,
+    scene,
+    () => {},
+    ".gltf"
+  );
+  console.log(
+    "compressed cube loaded from base64 with SceneLoader.AppendAsync"
+  );
+} catch (err) {
+  if (err) {
+    console.log(
+      "Testing failed, which is expected until the issue is identified."
+    );
+    console.log(err.message);
+    exit(1);
+  }
+}
+
+console.log("Testing completed successfully.");
+exit(0);
