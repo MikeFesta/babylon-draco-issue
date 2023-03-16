@@ -1,0 +1,25 @@
+{
+  "name": "babylon-draco-issue",
+  "version": "1.0.0",
+  "description": "Test code showing that SceneLoader.AppendAsync is not working for draco compressed base64 strings",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MikeFesta/babylon-draco-issue.git"
+  },
+  "keywords": [
+    "babylon",
+    "draco",
+    "base64",
+    "gltf",
+    "appendasync",
+    "fileloader"
+  ],
+  "author": "Mike Festa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MikeFesta/babylon-draco-issue/issues"
+  },
+  "homepage": "https://github.com/MikeFesta/babylon-draco-issue#readme"
+}
